@@ -62,6 +62,7 @@ Options:
   --migrations          Also show coins graduating from the bonding curve
   --limit <n>           Stop after n matching events
   --json                One JSON object per line (for piping into other tools)
+  --version             Show version
   --help                Show this help
 
 Examples:

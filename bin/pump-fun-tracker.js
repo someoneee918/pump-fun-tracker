@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readFileSync } from "node:fs";
 import { c, footer, main, pad, parseArgs, short } from "../lib/core.js";
 import { connect, makeFilter } from "../lib/feed.js";
 
@@ -15,6 +16,7 @@ Options:
   --migrations          Also show coins graduating from the bonding curve
   --limit <n>           Stop after n matching events
   --json                One JSON object per line (for piping into other tools)
+  --version             Show version
   --help                Show this help
 
 Examples:
@@ -30,8 +32,13 @@ process.stdout.on("error", (err) => {
 });
 
 main(async () => {
-  const args = parseArgs(process.argv.slice(2), { booleans: ["migrations", "json", "help"] });
+  const args = parseArgs(process.argv.slice(2), { booleans: ["migrations", "json", "help", "version"] });
   if (args.help) { console.log(HELP); return; }
+  if (args.version) {
+    const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+    console.log(pkg.version);
+    return;
+  }
   const filter = makeFilter({
     minDevBuy: Number(args["min-dev-buy"]) || 0,
     maxDevBuy: args["max-dev-buy"] !== undefined ? Number(args["max-dev-buy"]) : Infinity,
