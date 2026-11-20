@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { c, footer, main, pad, parseArgs, short } from "../lib/core.js";
-import { connect, makeFilter } from "../lib/feed.js";
+import { connect, makeFilter, readOptions } from "../lib/feed.js";
 
 const HELP = `pump-fun-tracker: every new pump.fun launch, live in your terminal
 
@@ -32,13 +32,9 @@ process.stdout.on("error", (err) => {
 main(async () => {
   const args = parseArgs(process.argv.slice(2), { booleans: ["migrations", "json", "help"] });
   if (args.help) { console.log(HELP); return; }
-  const filter = makeFilter({
-    minDevBuy: Number(args["min-dev-buy"]) || 0,
-    maxDevBuy: args["max-dev-buy"] !== undefined ? Number(args["max-dev-buy"]) : Infinity,
-    name: typeof args.name === "string" ? args.name : null,
-    exclude: typeof args.exclude === "string" ? args.exclude : null,
-  });
-  const limit = Number(args.limit) || Infinity;
+  const options = readOptions(args);
+  const filter = makeFilter(options);
+  const limit = options.limit;
   let shown = 0;
   let seen = 0;
   const started = Date.now();
